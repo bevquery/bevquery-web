@@ -15,25 +15,26 @@
   <iframe id="appFrame" src=""></iframe>
 
   <script>
-    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyy7OLx8TGN_8mfi3BXA8ilZN4pSr2aXh_Tpdia_k8KgmdKhYJCnD-wAsO5ApiAtjqr/exec";
-    const frame = document.getElementById('appFrame');
+  // Replace the URL below with your LATEST Web App Executable URL
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzkoNRmz6OvgGaHqbeCHjT9sXQjWZMbqhV-49JFd0J9Dn12ewpVeVKj9sRL5lzIEGVt/exec";
+  const frame = document.getElementById('appFrame');
 
-    // 1. On load, check if we have a session token in the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const savedToken = urlParams.get('sid');
-    
-    // 2. Load the iframe with the token if it exists
-    frame.src = savedToken ? `${GOOGLE_SCRIPT_URL}?sid=${savedToken}` : GOOGLE_SCRIPT_URL;
+  const urlParams = new URLSearchParams(window.location.search);
+  const savedToken = urlParams.get('sid');
+  
+  // Load the app with the sid if it exists in the URL
+  frame.src = savedToken ? `${GOOGLE_SCRIPT_URL}?sid=${savedToken}` : GOOGLE_SCRIPT_URL;
 
-    // 3. Listen for "Login Success" messages from the App
-    window.addEventListener("message", (event) => {
-      if (event.data && event.data.type === "AUTH_SUCCESS") {
-        const token = event.data.token;
-        // Update the GitHub URL without refreshing the page
-        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?sid=' + token;
-        window.history.pushState({path:newUrl}, '', newUrl);
-      }
-    });
-  </script>
+  window.addEventListener("message", (event) => {
+    if (event.data && event.data.type === "AUTH_SUCCESS") {
+      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?sid=' + event.data.token;
+      window.history.pushState({path:newUrl}, '', newUrl);
+    }
+    if (event.data && event.data.type === "LOGOUT") {
+      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+      window.history.pushState({path:cleanUrl}, '', cleanUrl);
+    }
+  });
+</script>
 </body>
 </html>
