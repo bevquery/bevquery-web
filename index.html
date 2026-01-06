@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="en">
 <head>
   <link rel="icon" type="image/png" href="https://drive.google.com/file/d/15eOL2mQdacWYhrL023EhtEvW_Oi1ROdO/view?usp=drive_link">
@@ -12,29 +12,7 @@
   </style>
 </head>
 <body>
-  <iframe id="appFrame" src=""></iframe>
-
-  <script>
-  // Replace the URL below with your LATEST Web App Executable URL
-  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwzKwg5EmXlsiyfZfcKCZvuEo0vjhbuR_g4rmEi8n3P6vrI1eP7H1DESfgtv9eHBhP-/exec";
-  const frame = document.getElementById('appFrame');
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const savedToken = urlParams.get('sid');
-  
-  // Load the app with the sid if it exists in the URL
-  frame.src = savedToken ? `${GOOGLE_SCRIPT_URL}?sid=${savedToken}` : GOOGLE_SCRIPT_URL;
-
-  window.addEventListener("message", (event) => {
-    if (event.data && event.data.type === "AUTH_SUCCESS") {
-      const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?sid=' + event.data.token;
-      window.history.pushState({path:newUrl}, '', newUrl);
-    }
-    if (event.data && event.data.type === "LOGOUT") {
-      const cleanUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
-      window.history.pushState({path:cleanUrl}, '', cleanUrl);
-    }
-  });
-</script>
+  <iframe src="https://script.google.com/macros/s/AKfycbyt9jIltrwiyaBujbrYeJcXoTnHybcdHN_J8ztPv2qQrUTYQvD7BH2T2Le8Fyn6hwZs/exec"></iframe>
 </body>
+
 </html>
