@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="icon" type="image/png" href="https://drive.google.com/file/d/15eOL2mQdacWYhrL023EhtEvW_Oi1ROdO/view?usp=drive_link">
-<link rel="apple-touch-icon" href="https://drive.google.com/file/d/15eOL2mQdacWYhrL023EhtEvW_Oi1ROdO/view?usp=drive_link">  
+  <link rel="icon" type="image/png" href="https://drive.google.com/file/d/15eOL2mQdacWYhrL023EhtEvW_Oi1ROdO/view?usp=drive_link">
+<link rel="apple-touch-icon" href="https://drive.google.com/file/d/15eOL2mQdacWYhrL023EhtEvW_Oi1ROdO/view?usp=drive_link">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>BevQuery</title>
@@ -12,7 +12,28 @@
   </style>
 </head>
 <body>
-  <iframe src="https://script.google.com/macros/s/AKfycbyt9jIltrwiyaBujbrYeJcXoTnHybcdHN_J8ztPv2qQrUTYQvD7BH2T2Le8Fyn6hwZs/exec"></iframe>
-</body>
+  <iframe id="appFrame" src=""></iframe>
 
+  <script>
+    const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyt9jIltrwiyaBujbrYeJcXoTnHybcdHN_J8ztPv2qQrUTYQvD7BH2T2Le8Fyn6hwZs/exec";
+    const frame = document.getElementById('appFrame');
+
+    // 1. On load, check if we have a session token in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const savedToken = urlParams.get('sid');
+    
+    // 2. Load the iframe with the token if it exists
+    frame.src = savedToken ? `${GOOGLE_SCRIPT_URL}?sid=${savedToken}` : GOOGLE_SCRIPT_URL;
+
+    // 3. Listen for "Login Success" messages from the App
+    window.addEventListener("message", (event) => {
+      if (event.data && event.data.type === "AUTH_SUCCESS") {
+        const token = event.data.token;
+        // Update the GitHub URL without refreshing the page
+        const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?sid=' + token;
+        window.history.pushState({path:newUrl}, '', newUrl);
+      }
+    });
+  </script>
+</body>
 </html>
