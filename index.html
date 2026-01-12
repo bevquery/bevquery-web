@@ -1,18 +1,39 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <link rel="icon" type="image/png" href="https://drive.google.com/file/d/15eOL2mQdacWYhrL023EhtEvW_Oi1ROdO/view?usp=drive_link">
-<link rel="apple-touch-icon" href="https://drive.google.com/file/d/15eOL2mQdacWYhrL023EhtEvW_Oi1ROdO/view?usp=drive_link">
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>BevQuery</title>
-  <style>
-    body, html { margin: 0; padding: 0; height: 100%; width: 100%; overflow: hidden; background-color: #f7f9fc; }
-    iframe { width: 100%; height: 100%; border: none; display: block; }
-  </style>
-</head>
 <body>
-  <iframe src="https://script.google.com/macros/s/AKfycbwjtjGprOTnI8-0Tm5gS3i2UUwFB7sq6W1QjPH6Yo3TShO61oE4dpiAjn5VOQbgqret/exec"></iframe>
-</body>
+  <iframe id="appFrame"></iframe>
 
-</html>
+  <script>
+    const WEBAPP_BASE = "https://script.google.com/macros/s/AKfycbxmA1RCxkkL2U4NhQKfH64RWYhM9QFd61YUANt2eBH4sh7bnnH7tFw5c8n8o5IDQxTg/exec";
+    const STORAGE_KEY = "bevq_token"; // match your canonical key
+
+    const frame = document.getElementById("appFrame");
+
+    function buildUrlWithSid(token) {
+      if (!token) return WEBAPP_BASE;
+      return WEBAPP_BASE + "?sid=" + encodeURIComponent(token);
+    }
+
+    function loadFrameFromStoredToken() {
+      let token = null;
+      try { token = localStorage.getItem(STORAGE_KEY); } catch (e) {}
+      frame.src = buildUrlWithSid(token);
+    }
+
+    // Initial load
+    loadFrameFromStoredToken();
+
+    // Receive token from iframe after login
+    window.addEventListener("message", (ev) => {
+      const data = ev.data || {};
+      if (data.type === "AUTH_SUCCESS" && data.token) {
+        try { localStorage.setItem(STORAGE_KEY, data.token); } catch (e) {}
+        // Optional: keep iframe URL in sync so a hard refresh keeps working
+        frame.src = buildUrlWithSid(data.token);
+      }
+
+      if (data.type === "LOGOUT") {
+        try { localStorage.removeItem(STORAGE_KEY); } catch (e) {}
+        frame.src = WEBAPP_BASE;
+      }
+    });
+  </script>
+</body>
